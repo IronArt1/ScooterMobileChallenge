@@ -1,0 +1,32 @@
+version: '2'
+
+services:
+  webserver:
+    restart: unless-stopped
+    build:
+      context: ./docker/webserver-apache
+      args:
+        - http_proxy
+        - https_proxy
+        - no_proxy
+    environment:
+      - http_proxy
+      - https_proxy
+      - no_proxy
+    volumes:
+      - "$PWD/docker/webserver-apache/sites-enabled:/etc/apache2/sites-enabled:ro"
+      - "$PWD:/code"
+    expose:
+      - "80"
+      - "443"
+    networks:
+      - default
+  db:
+    image: library/mysql:8.0.23
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: scooter
+  rabbitmq:
+    image: "rabbitmq:3-management"
