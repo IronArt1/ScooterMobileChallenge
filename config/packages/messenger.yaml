@@ -1,0 +1,44 @@
+framework:
+    messenger:
+        default_bus: command.bus
+        buses:
+          command.bus:
+            middleware:
+              - App\Messenger\AuditMiddleware
+          event.bus:
+            default_middleware: allow_no_handlers
+            middleware:
+              - App\Messenger\AuditMiddleware
+          query.bus: ~
+
+        failure_transport: failed
+
+        transports:
+          async:
+            dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
+            retry_strategy:
+              delay: 2000
+              service: null
+            options:
+              exchange:
+                name: messages
+                type: direct
+                default_publish_routing_key: normal
+              queues:
+                messages_normal:
+                  binding_keys: [ normal ]
+          async_priority_high:
+            dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
+            options:
+              exchange:
+                name: messages
+                type: direct
+                default_publish_routing_key: high
+              queues:
+                messages_high:
+                  binding_keys: [ high ]
+          failed: 'doctrine://default?queue_name=failed'
+
+        routing:
+          'App\Message\Command\DeployScooters': async_priority_high
+          'App\Message\Event\RunningScooterEvent': async

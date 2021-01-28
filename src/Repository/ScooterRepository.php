@@ -5,7 +5,6 @@ namespace App\Repository;
 use App\Entity\Scooter;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
-use phpDocumentor\Reflection\Types\Boolean;
 
 /**
  * @method Scooter|null find($id, $lockMode = null, $lockVersion = null)
@@ -23,12 +22,16 @@ class ScooterRepository extends ServiceEntityRepository
     /**
      * @return Scooter[]
      */
-    public function scooterUpdateStatus(Boolean $status)
-    {
+    public function scooterUpdateStatus(
+        bool $status,
+        string $id
+    ) {
         return $this->createQueryBuilder('s')
             ->update()
+            ->andWhere('s.id = :id')
+            ->setParameter('id', $id)
             ->set('s.occupied', ':occupied')
-            ->setParameter(':occupied', $status)
+            ->setParameter('occupied', $status)
             ->getQuery()
             ->execute()
         ;
@@ -40,20 +43,9 @@ class ScooterRepository extends ServiceEntityRepository
     public function findAllMatching(?string $query, int $limit = 5)
     {
         return $this->createQueryBuilder('s')
-            ->andWhere('u.email LIKE :query')
+            ->andWhere('s.ocupied LIKE :query')
             ->setParameter('query', '%'.$query.'%')
             ->setMaxResults($limit)
-            ->getQuery()
-            ->getResult();
-    }
-
-    /**
-     * @return Scooter[]
-     */
-    public function findAllSubscribedToNewsletter(): array
-    {
-        return $this->createQueryBuilder('s')
-            ->andWhere('u.subscribeToNewsletter = 1')
             ->getQuery()
             ->getResult();
     }
@@ -65,9 +57,9 @@ class ScooterRepository extends ServiceEntityRepository
     public function findByExampleField($value)
     {
         return $this->createQueryBuilder('s')
-            ->andWhere('u.exampleField = :val')
+            ->andWhere('s.exampleField = :val')
             ->setParameter('val', $value)
-            ->orderBy('u.id', 'ASC')
+            ->orderBy('s.id', 'ASC')
             ->setMaxResults(10)
             ->getQuery()
             ->getResult()
@@ -79,7 +71,7 @@ class ScooterRepository extends ServiceEntityRepository
     public function findOneBySomeField($value): ?Scooter
     {
         return $this->createQueryBuilder('s')
-            ->andWhere('u.exampleField = :val')
+            ->andWhere('s.exampleField = :val')
             ->setParameter('val', $value)
             ->getQuery()
             ->getOneOrNullResult()

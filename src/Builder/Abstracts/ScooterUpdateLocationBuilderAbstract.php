@@ -6,17 +6,19 @@ use App\Interfaces\Controller\ControllerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
- * Class ScooterUpdateStatusBuilderAbstract
+ * Class ScooterUpdateLocationBuilderAbstract
  *
  * @package App\Builder\Abstracts
  */
-abstract class ScooterUpdateStatusBuilderAbstract extends BuilderAbstract
+abstract class ScooterUpdateLocationBuilderAbstract extends BuilderAbstract
 {
     /**
      * Validation parameters for POST request are
      */
     protected const POST_VALIDATION = [
-        'occupied' => ControllerInterface::BOOLEAN_TYPE_HOLDER,
+        'updatedAt' => ControllerInterface::STRING_TYPE_HOLDER,
+        'latitude' => ControllerInterface::STRING_TYPE_HOLDER,
+        'longitude' => ControllerInterface::STRING_TYPE_HOLDER
     ];
 
     /**
@@ -30,11 +32,11 @@ abstract class ScooterUpdateStatusBuilderAbstract extends BuilderAbstract
     }
 
     /**
-     * Updates a scooter status
+     * Updates a scooter location
      *
      * A 1st listener's
      */
-    abstract protected function aScooterUpdateStatus(): void;
+    abstract protected function aScooterUpdateLocation(): void;
 
     /**
      * Make an appropriate response for a controller

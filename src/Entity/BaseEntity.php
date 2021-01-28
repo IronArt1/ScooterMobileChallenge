@@ -125,16 +125,6 @@ class BaseEntity
             $reflectionInstance->getShortName();
     }
 
-    /**
-     * Getting createdDateTime
-     *
-     * @return string
-     */
-    public function getCreatedDateTime()
-    {
-        return $this->createdDateTime;
-    }
-
     public function getGlobalStackValue($arg)
     {
         return $this->globalStack[$arg];
@@ -146,29 +136,39 @@ class BaseEntity
     public function getRoles(): array
     {
         // right now just faking it
-        return [];
+        // and yes I know that it is a violation of SOLID
+        // -> Interface segregation principle
+        return ['MANAGE'];
     }
 
     public function getPassword()
     {
         // right now just faking it
+        // and yes I know that it is a violation of SOLID
+        // -> Interface segregation principle
         return '';
     }
 
     public function getSalt()
     {
         // right now just faking it
+        // and yes I know that it is a violation of SOLID
+        // -> Interface segregation principle
         return '';
     }
 
     public function getUsername()
     {
         // right now just faking it
+        // and yes I know that it is a violation of SOLID
+        // -> Interface segregation principle// right now just faking it
         return '';
     }
 
     public function eraseCredentials()
     {
         // right now just faking it
+        // and yes I know that it is a violation of SOLID
+        // -> Interface segregation principle
     }
 }

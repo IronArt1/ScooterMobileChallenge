@@ -60,6 +60,7 @@ class ApiToken
     ) {
         $faker = Factory::create();
 
+        // here we can actually see why it's better to carry out any parameters in JWT
         $this->token = $JWTTokenService->generateToken(
             [
                 'fakeParam1' => $faker->uuid,

@@ -4,19 +4,20 @@ namespace App\Builder;
 
 use App\Entity\Scooter;
 use App\Traits\GeneralBuilder;
-use Codeception\Util\HttpCode;
 use App\Service\ScooterService;
 use App\Interfaces\Builder\BuilderInterface;
 use App\Exception\InsufficientDataException;
-use App\Builder\Abstracts\ScooterUpdateStatusBuilderAbstract;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
+use App\Builder\Abstracts\ScooterUpdateLocationBuilderAbstract;
 
 /**
- * Class ScooterUpdateStatusBuilder
+ * Class ScooterUpdateLocationBuilder
  *
  * @package App\Builder
  */
-final class ScooterUpdateStatusBuilder extends ScooterUpdateStatusBuilderAbstract implements BuilderInterface
+final class ScooterUpdateLocationBuilder extends ScooterUpdateLocationBuilderAbstract implements BuilderInterface
 {
     use GeneralBuilder;
 
@@ -25,29 +26,48 @@ final class ScooterUpdateStatusBuilder extends ScooterUpdateStatusBuilderAbstrac
      *
      * @var Scooter
      */
-    private Scooter $scooter;
+    private $scooter;
 
     /**
      * A scooter service's
      *
      * @var ScooterService
      */
-    private ScooterService $scooterService;
+    private $scooterService;
+
+    /**
+     * @var SerializerInterface
+     */
+    private $serializer;
+
+    /**
+     * @var ValidatorInterface
+     */
+    private $validator;
+    private Request $request;
 
     /**
      * ScooterUpdateStatusBuilder constructor.
      *
      * @param Scooter $scooter
+     * @param ValidatorInterface $validator
+     * @param SerializerInterface $serializer
      * @param ScooterService $scooterService
      * @throws \ReflectionException
      */
     public function __construct(
         Scooter $scooter,
-        ScooterService $scooterService
+        ValidatorInterface $validator,
+        SerializerInterface $serializer,
+        ScooterService $scooterService,
+        Request $request
     ) {
         parent::__construct();
 
+        $this->request = $request;
         $this->scooter = $scooter;
+        $this->validator = $validator;
+        $this->serializer = $serializer;
         $this->scooterService = $scooterService;
     }
 
@@ -82,11 +102,15 @@ final class ScooterUpdateStatusBuilder extends ScooterUpdateStatusBuilderAbstrac
     /**
      * @inheritDoc
      */
-    final protected function aScooterUpdateStatus(): void
+    final protected function aScooterUpdateLocation(): void
     {
-        $this->scooterService->scooterUpdateStatus(
+        $this->scooterService->scooterUpdateLocation(
+            $this->request->getContent(),
             $this->scooter,
-            $this->body['occupied']
+            $this->serializer,
+            $this->validator,
+            $this->response,
+            $this->statusCode
         );
     }
 }

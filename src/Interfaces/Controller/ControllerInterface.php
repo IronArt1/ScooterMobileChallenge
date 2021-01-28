@@ -39,6 +39,16 @@ interface ControllerInterface
     public const BOOLEAN_TYPE_HOLDER = 'boolean';
 
     /**
+     * A DateTime type holder's
+     */
+    public const DATE_TIME_TYPE_HOLDER = 'DateTime';
+
+    /**
+     * A double type holder's
+     */
+    public const DOUBLE_TYPE_HOLDER = 'double';
+
+    /**
      * A status type holder's
      */
     public const STATUS_TYPE_HOLDER = 'status';

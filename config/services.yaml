@@ -6,6 +6,7 @@
 parameters:
     myAppId: '95d190de-653f-42a1-920a-e1ad2a50e9e8'
     appAuthorization: 'bXlTY29vdGVyOjNvbW00dG9S'
+    symfonyBackendURL: 'http://127.0.0.1'
     # JWTPrivateKey must be stored in a secret vault in a real App
     JWTPrivateKey: 'A fake security key is'
 
@@ -14,6 +15,9 @@ services:
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+        bind:
+            $messengerAuditLogger: '@monolog.logger.messenger_audit'
+            $data: [ '%symfonyBackendURL%', '%myAppId%', "%appAuthorization%" ]
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name

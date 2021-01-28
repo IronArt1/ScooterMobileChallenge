@@ -1,4 +1,6 @@
-FROM php:8.0.1-apache-buster
+# downgrading php from v8.0.1 to v7.4 because of AMQP
+# amqp.c:291:144: error: expected ';', ',' or ')' before 'TSRMLS_DC'
+FROM php:7.4-apache-buster
 
 # Setting up constants for an environment
 ENV TIMEZONE            UTC
@@ -10,16 +12,20 @@ RUN apt-get update \
   && apt-get install -y apt-utils vim wget alien ca-certificates git make autoconf g++ gcc \
   libmemcached-dev libc-dev libzip-dev libssl-dev zlib1g-dev re2c libpcre3-dev \
   build-essential libicu-dev libxml2-dev libjpeg-dev libfreetype6-dev \
-  libsodium-dev libldap2-dev libaio1 iproute2 lsb-release
+  libsodium-dev libldap2-dev libaio1 iproute2 lsb-release librabbitmq-dev libssh-dev
 
 # Setting up php
 RUN docker-php-ext-configure intl \
   && docker-php-ext-install intl \
   && docker-php-ext-install gettext \
   && docker-php-ext-install opcache \
-  && docker-php-ext-install pdo_mysql \
-  && pecl install apcu \
-  && docker-php-ext-enable apcu \
+  && docker-php-ext-install pdo_mysql
+RUN docker-php-ext-install bcmath \
+  sockets
+RUN pecl install apcu \
+  && docker-php-ext-enable apcu
+RUN pecl install amqp \
+  && docker-php-ext-enable amqp \
   && pecl install zip \
   && docker-php-ext-enable zip \
   && docker-php-ext-configure ldap --with-libdir=lib/x86_64-linux-gnu/ \

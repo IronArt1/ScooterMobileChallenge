@@ -2,10 +2,9 @@
 
 namespace App\Interfaces\Service;
 
-use App\Manager\ScooterManager;
-use App\Service\JWTTokenService;
-use App\Interfaces\Manager\ManagerInterface;
-use phpDocumentor\Reflection\Types\Boolean;
+use App\Entity\Scooter;
+use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
  * Interface ScooterServiceInterface
@@ -22,7 +21,32 @@ interface ScooterServiceInterface
     ];
 
     /**
-     * Updates a scooter status
+     * Updates a scooter's status
+     *
+     * @param Scooter $scooter
+     * @param boolean $status
      */
-    public function scooterUpdateStatus(Boolean $status): void;
+    public function scooterUpdateStatus(
+        Scooter $scooter,
+        bool $status
+    ): void;
+
+    /**
+     * Updates a scooter's location
+     *
+     * @param $content
+     * @param Scooter $scooter
+     * @param SerializerInterface $serializer
+     * @param ValidatorInterface $validator
+     * @param array $response
+     * @param string $statusCode
+     */
+    public function scooterUpdateLocation(
+        $content,
+        Scooter $scooter,
+        SerializerInterface $serializer,
+        ValidatorInterface $validator,
+        array &$response,
+        string &$statusCode
+    ): void;
 }

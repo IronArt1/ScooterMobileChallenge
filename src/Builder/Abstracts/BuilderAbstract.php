@@ -33,7 +33,7 @@ abstract class BuilderAbstract
     protected $response;
 
     /**
-     * In a create case should set up HttpCode::CREATED
+     * In the create case should set up HttpCode::CREATED
      *
      * @var int
      */
@@ -65,6 +65,7 @@ abstract class BuilderAbstract
      */
     public function __construct(EventDispatcherInterface $dispatcher = null)
     {
+        // usually there is a need of the one, so will see...
         if (isset($dispatcher)) {
             $this->dispatcher = $dispatcher;
         }
@@ -74,7 +75,7 @@ abstract class BuilderAbstract
             $this->listeners[] = $method->getShortName();
         }
 
-        asort($this->listeners[], SORT_STRING);
+        asort($this->listeners, SORT_STRING);
     }
 
     /**
@@ -97,19 +98,6 @@ abstract class BuilderAbstract
     public function getResponse(): JsonResponse
     {
         return new JsonResponse($this->response, $this->statusCode);
-    }
-
-    /**
-     * Check an instance of a manager in order to interrupt the build flow
-     * if there is a necessity
-     *
-     * @param $manager
-     */
-    protected function checkConsistency($manager)
-    {
-        if (!($manager instanceof ManagerInterface)) {
-            $this->listeners = $this->response = [];
-        }
     }
 
     /**

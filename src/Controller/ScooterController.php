@@ -2,40 +2,53 @@
 
 namespace App\Controller;
 
-use App\Builder\ScooterUpdateStatusBuilder;
-use App\Builder\Superior;
+use App\Builder\ScooterUpdateLocationBuilder;
 use App\Entity\Scooter;
-use App\Service\ScooterService;
+use App\Builder\Superior;
 use Codeception\Util\HttpCode;
+use App\Service\ScooterService;
+use Symfony\Component\HttpFoundation\{
+    Request,
+    Response,
+    JsonResponse
+};
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
+use App\Builder\ScooterUpdateStatusBuilder;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
+/**
+ * Class ScooterController
+ *
+ * @package App\Controller
+ */
 class ScooterController extends BaseController
 {
     /**
      * Updates a scooter's status
      *
-     * @Route("/scooter/update-status", name="scooter-update-status", methods={"POST"})
+     * @Route("/scooter/{id}/update-status", name="scooter-update-status", methods={"POST"})
+     * @param Scooter $scooter
      * @param ScooterService $scooterService
      * @return Response
      * @throws \ReflectionException
      */
-    //#[Route('/scooter/update-status', name: 'scooter-update-status', methods: ['POST'])]
-    public function scooterUpdateStatus(ScooterService $scooterService): Response
-    {
+    public function scooterUpdateStatus(
+        Scooter $scooter,
+        ScooterService $scooterService
+    ): JsonResponse {
+        // Here we can verify that a scooter is an actual owner of its table record
+        // and can make requested changes (against imposters)
+        $this->denyAccessUnlessGranted('MANAGE', $scooter);
         $superior = new Superior(
             $this->request->getContent(),
             $this->request->getMethod()
         );
 
         $scooterUpdateStatusBuilder = new ScooterUpdateStatusBuilder(
-            $scooterService,
-            $this->dispatcher
+            $scooter,
+            $scooterService
         );
 
         return $superior->build($scooterUpdateStatusBuilder);
@@ -44,46 +57,40 @@ class ScooterController extends BaseController
     /**
      * Allows update location for a scooter
      *
-     * @param Scooter $scooter
-     * @param EntityManagerInterface $entityManager
-     * @param SerializerInterface $serializer
+     * @Route("/scooter/{id}/update-location", name="scooter-update-location", methods={"POST"})
      * @param Request $request
+     * @param Scooter $scooter
      * @param ValidatorInterface $validator
+     * @param ScooterService $scooterService
+     * @param SerializerInterface $serializer
+     * @param EntityManagerInterface $entityManager
      * @return JsonResponse
+     * @throws \ReflectionException
      */
-    #[Route('/scooter/update-location', name: 'scooter-update-location')]
     public function updateScooterLocation(
-        Scooter $scooter,
-        EntityManagerInterface $entityManager,
-        SerializerInterface $serializer,
         Request $request,
-        ValidatorInterface $validator
+        Scooter $scooter,
+        ValidatorInterface $validator,
+        ScooterService $scooterService,
+        SerializerInterface $serializer,
+        EntityManagerInterface $entityManager
     ): JsonResponse {
-        $serializer->deserialize(
-            $request->getContent(),
-            Scooter::class,
-            'json',
-            [
-                'object_to_populate' => $scooter,
-                'groups' => ['input']
-            ]
+        // see a comment at line 35
+        $this->denyAccessUnlessGranted('MANAGE', $scooter);
+
+        $superior = new Superior(
+            $this->request->getContent(),
+            $this->request->getMethod()
         );
 
-        $violations = $validator->validate($scooter);
-        if ($violations->count() > 0) {
-            return $this->json($violations, HttpCode::BAD_REQUEST);
-        }
-
-        $entityManager->persist($scooter);
-        $entityManager->flush();
-
-        return $this->json(
+        $scooterUpdateLocationBuilder = new ScooterUpdateLocationBuilder(
             $scooter,
-            HttpCode::OK,
-            [],
-            [
-                'groups' => ['location']
-            ]
+            $validator,
+            $serializer,
+            $scooterService,
+            $this->request
         );
+
+        return $superior->build($scooterUpdateLocationBuilder);
     }
 }

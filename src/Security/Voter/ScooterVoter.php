@@ -22,10 +22,19 @@ class ScooterVoter extends Voter
             && $subject instanceof Scooter;
     }
 
+    /**
+     * Here we can verify that a scooter is an actual owner of its table record
+     * and can make requested changes (against imposters)
+     *
+     * @param string $attribute
+     * @param mixed $subject
+     * @param TokenInterface $token
+     * @return bool
+     */
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
     {
         /** @var Scooter $subject */
-        $scooter = $token->getOwner();
+        $scooter = $token->getUser();
 
         switch ($attribute) {
             case 'MANAGE':

@@ -12,13 +12,6 @@ use App\Interfaces\Manager\ManagerInterface;
 interface ServiceInterface
 {
     /**
-     * A bag of default request parameters'
-     */
-    public const PARAMETERS_BAG = [
-        'types'
-    ];
-
-    /**
      * Common headers for every API request're
      */
     public const HEADERS = [
@@ -27,7 +20,7 @@ interface ServiceInterface
         'Content-Type'     => 'application/json',
         'Accept'           => 'application/json',
         'Connection'       =>  'keep-alive',
-        'Authorization'    => 'Basic '
+        'Authorization'    => 'Bearer '
     ];
 
     /**

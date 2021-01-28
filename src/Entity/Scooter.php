@@ -24,43 +24,15 @@ class Scooter extends BaseEntity implements UserInterface
     protected $apiTokens;
 
     /**
-     * @ORM\Column(type="decimal", precision=20, scale=16, nullable=true)
-     */
-    private $latitude;
-
-    /**
-     * @ORM\Column(type="decimal", precision=20, scale=16, nullable=true)
-     */
-    private $longitude;
-
-    /**
      * @ORM\Column(type="boolean")
      */
     private $occupied = FALSE;
 
-    public function getLatitude(): ?string
-    {
-        return $this->latitude;
-    }
-
-    public function setLatitude(?string $latitude): self
-    {
-        $this->latitude = $latitude;
-
-        return $this;
-    }
-
-    public function getLongitude(): ?string
-    {
-        return $this->longitude;
-    }
-
-    public function setLongitude(?string $longitude): self
-    {
-        $this->longitude = $longitude;
-
-        return $this;
-    }
+    /**
+     * @ORM\OneToOne(targetEntity=Location::class, inversedBy="scooter", cascade={"persist", "remove"})
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $location;
 
     public function getOccupied(): ?bool
     {
@@ -70,6 +42,18 @@ class Scooter extends BaseEntity implements UserInterface
     public function setOccupied(bool $occupied): self
     {
         $this->occupied = $occupied;
+
+        return $this;
+    }
+
+    public function getLocation(): ?Location
+    {
+        return $this->location;
+    }
+
+    public function setLocation(Location $location): self
+    {
+        $this->location = $location;
 
         return $this;
     }
