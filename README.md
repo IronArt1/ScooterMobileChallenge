@@ -1,4 +1,5 @@
 # the following command should be run:
+$ git checkout -b develop origin/develop
 $ docker-compose up
 $ docker ps -a
 $ sudo docker exec -it myscootercom_webserver_1 bash
