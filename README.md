@@ -1,12 +1,18 @@
 # the following command should be run:
+$ mkdir /tmp/scooter && cd /tmp/scooter
+$ git clone https://github.com/IronArt1/NordLockerScooter.git
+$ cd NordLockerScooter
 $ git checkout -b develop origin/develop
+$ composer install
 $ docker-compose up
+# open another terminal and run:
 $ docker ps -a
-$ sudo docker exec -it myscootercom_webserver_1 bash
+$ sudo docker exec -it nordlockerscooter_webserver_1 bash
+$ chmod -R 744 bin
 $ bin/console doctrine:schema:create
 $ bin/console doctrine:fixtures:load
 
-# locally (meaning not in the docker container)
+# locally run in the root of the project (meaning not in the docker container):
 $ mysql --host=127.0.0.1 --port=33066 --user=root --password=root
 mysql> use scooter;
 mysql> select * from api_token;
