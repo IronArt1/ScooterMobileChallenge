@@ -35,8 +35,8 @@ that peculiar way, if you will...
 * The rest of the task, like, Mobile clients part + tests + Swagger(API docs) will 
 be done during the next week if you do not mind(we all have to make living, you know + 
   I do not work during the weekends...), but here is a question. In the job
-description I haven't seen JS abilities, but you can be rest assured that I have 
-those plenty... Also I've done numbers of testing activities that you can see from
+description I haven't seen JS abilities, but you can be rest assured that I've got 
+plenty of those, actually you can see it in my profile... Also I've done numbers of testing activities that you can see from
 my profile, so that will not be a problem in any way also. So the question is since the
 assessment process is all about evaluation of person's capabilities haven't we got 
 already enough from the current state of the project? Please, get back to me on the matter
