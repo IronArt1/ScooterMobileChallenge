@@ -42,3 +42,6 @@ services:
         public: true
         arguments:
             $JWTPrivateKey: '%JWTPrivateKey%'
+
+    App\EventListener\LocationSetListener:
+        arguments: [ '@doctrine.orm.default_entity_manager' ]

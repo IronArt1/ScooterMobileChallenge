@@ -2,23 +2,37 @@
 
 namespace App\MessageHandler\Event;
 
+use App\Service\{
+    BaseService,
+    ScooterService
+};
 use App\Entity\Scooter;
-use App\Exception\ScooterMalfunctioningException;
-use App\Service\BaseService;
-use App\Service\ScooterService;
 use Codeception\Util\HttpCode;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Message\Event\RunningScooterEvent;
-use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
+use App\Exception\ScooterMalfunctioningException;
 use Symfony\Component\Messenger\MessageBusInterface;
+use App\Interfaces\EventHandler\EventHandlerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
-class RunningScooterEventHandler implements MessageHandlerInterface
+/**
+ * Class RunningScooterEventHandler
+ *
+ * @package App\MessageHandler\Event
+ */
+class RunningScooterEventHandler implements MessageHandlerInterface, EventHandlerInterface
 {
     /**
-     * Explicitly for testing reasons'
+     * An amount minutes in an hour's
      */
-    private const INITIAL_LATITUDE = 43.6532;
+    private const MINUTES = 60;
+
+    /**
+     * It appears to be a factor for transformation km into longitude
+     */
+    private const DELIMITER = 100;
 
     /**
      * @var MessageBusInterface
@@ -41,40 +55,59 @@ class RunningScooterEventHandler implements MessageHandlerInterface
     private $router;
 
     /**
+     * @var TokenStorageInterface
+     */
+    private $tokenStorage;
+
+    /**
      * DeployScootersHandler constructor.
      *
      * @param MessageBusInterface $eventBus
      * @param ScooterService $scooterService
      * @param EntityManagerInterface $entityManager
      * @param UrlGeneratorInterface $router
+     * @param TokenStorageInterface $tokenStorage
      */
     public function __construct(
         MessageBusInterface $eventBus,
         ScooterService $scooterService,
         EntityManagerInterface $entityManager,
-        UrlGeneratorInterface $router
+        UrlGeneratorInterface $router,
+        TokenStorageInterface $tokenStorage
     ) {
         $this->router = $router;
         $this->eventBus = $eventBus;
         $this->entityManager = $entityManager;
         $this->scooterService = $scooterService;
+        $this->tokenStorage = $tokenStorage;
     }
 
     public function __invoke(RunningScooterEvent $event)
     {
         /** @var $scooter Scooter  */
-        $scooter = $this->entityManager->getRepository(Scooter::class)->findOneBy(
-            ['id' => $event->getScooterId()]
+        $scooter = $this->tokenStorage->getToken()->getUser();
+
+        // Let's assume here that 1 second equals 1 minute of traveling,
+        // since we are not going to waste any of our time and wait for updates...
+        $factor = ($event->getScooterVelocity() *
+            (new \DateTime())->diff($scooter->getLocation()->getUpdatedAt())->s) /
+            self::DELIMITER;
+
+        if ($scooter->getMetadata() && 0b01) {
+            $factor *= -1;
+        }
+
+        $this->scooterService->setBodyFields(
+            [
+            'updatedAt'=> (new \DateTime())->format(DATE_ATOM)
+        ] + (
+                ($scooter->getMetadata() && 0b10) ?
+                [self::UNITS_OF_COORDINATES[1] => (string)($scooter->getLocation()->getAdjustedValue($factor, self::UNITS_OF_COORDINATES[1]))] :
+                [self::UNITS_OF_COORDINATES[0] => (string)($scooter->getLocation()->getAdjustedValue($factor, self::UNITS_OF_COORDINATES[0]))]
+            )
         );
 
-        $factor = 1/$event->getScooterVelocity();
-        $this->scooterService->setBodyFields([
-            'latitude' => (string)($scooter->getLocation()->getLatitude() + $factor),
-            'longitude' => (string)($scooter->getLocation()->getLongitude() + $factor),
-            'updatedAt'=> (new \DateTime())->format(DATE_ATOM)
-        ]);
-
-        /** @var  $scooter Scooter */
+        /** @var $scooter Scooter */
         $this->scooterService->addResouceIdentifier($this->router->generate(
             'scooter-update-location',
             ['id' => $scooter->getId()]
@@ -91,20 +124,17 @@ class RunningScooterEventHandler implements MessageHandlerInterface
         );
 
         if ($response['responseCode'] == HttpCode::CREATED) {
-            // Explicitly for testing reasons'
-            if ($scooter->getLocation()->getLatitude() < self::INITIAL_LATITUDE + $factor * 10) {
-                $this->eventBus->dispatch(
-                    new RunningScooterEvent(
-                        $scooter->getId(),
-                        $event->getScooterVelocity()
-                    )
-                );
-            }
+            // although we do can create a new queue and apply the time delay there...
+            sleep(random_int(2, 5));
+            $this->eventBus->dispatch(
+                new RunningScooterEvent(
+                    $scooter->getId(),
+                    $event->getScooterVelocity()
+                )
+            );
         } else {
             // there is something wrong with a particular scooter
             throw new ScooterMalfunctioningException($scooter->getId());
         }
-
-        sleep(1);
     }
 }

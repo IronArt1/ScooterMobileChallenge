@@ -96,6 +96,11 @@ class ScooterService extends BaseService implements ScooterServiceInterface
         } else {
             $this->em->persist($location);
             $this->em->flush();
+
+            if (!$location->getScooter()->getDistance()) {
+                $this->em->persist($location->getScooter());
+                $this->em->flush();
+            }
         }
     }
 }

@@ -93,6 +93,11 @@ class ApiToken
         return $this->type;
     }
 
+    public function getScooter(): Scooter
+    {
+        return $this->scooter;
+    }
+
     /**
      * Is used with ValidatorInterface
      *

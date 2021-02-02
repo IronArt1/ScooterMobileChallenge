@@ -34,6 +34,16 @@ class Scooter extends BaseEntity implements UserInterface
      */
     private $location;
 
+    /**
+     * @ORM\Column(type="binary")
+     */
+    private $metadata;
+
+    /**
+     * @ORM\Column(type="decimal", precision=20, scale=16)
+     */
+    private $distance;
+
     public function getOccupied(): ?bool
     {
         return $this->occupied;
@@ -54,6 +64,30 @@ class Scooter extends BaseEntity implements UserInterface
     public function setLocation(Location $location): self
     {
         $this->location = $location;
+
+        return $this;
+    }
+
+    public function getMetadata()
+    {
+        return $this->metadata;
+    }
+
+    public function setMetadata($metadata): self
+    {
+        $this->metadata = $metadata;
+
+        return $this;
+    }
+
+    public function getDistance(): ?string
+    {
+        return $this->distance;
+    }
+
+    public function setDistance(string $distance): self
+    {
+        $this->distance = $distance;
 
         return $this;
     }

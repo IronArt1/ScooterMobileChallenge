@@ -23,15 +23,16 @@ class DeployScootersHandler implements MessageSubscriberInterface
 {
     /**
      * A distance will be measured by usual V*t
+     * and here is a set of velocity in km/h
      */
     private const INITIAL_VELOCITY = [
-        //nasty driver
+        //nasty driver's
         40,
-        // adolescent driver
+        // adolescent driver's
         25,
-        // careful driver
+        // careful driver's
         15,
-        // elderly driver
+        // elderly driver's
         5
     ];
 

@@ -13,6 +13,7 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /**
  * @ORM\Entity(repositoryClass=LocationRepository::class)
+ * @ORM\EntityListeners({"App\EventListener\LocationSetListener"})
  */
 class Location
 {
@@ -29,7 +30,7 @@ class Location
      * @Groups({"input"})
      * @ORM\Column(type="decimal", precision=20, scale=16)
      * @Assert\NotNull(message="Please set a latitude")
-     * @Assert\Regex("/^\d+(\.\d+)?/")
+     * @Assert\Regex("/\d+(\.\d+)?/")
      */
     private $latitude;
 
@@ -37,9 +38,15 @@ class Location
      * @Groups({"input"})
      * @ORM\Column(type="decimal", precision=20, scale=16)
      * @Assert\NotNull(message="Please set a longitude")
-     * @Assert\Regex("/^\d+(\.\d+)?/")
+     * @Assert\Regex("/\d+(\.\d+)?/")
      */
     private $longitude;
+
+    /**
+     * @ORM\Column(type="decimal", precision=20, scale=16)
+     * @Assert\Regex("/\d+(\.\d+)?/")
+     */
+    private $destination;
 
     /**
      * @var \DateTime
@@ -75,6 +82,30 @@ class Location
     public function getLongitude(): ?string
     {
         return $this->longitude;
+    }
+
+    /**
+     * Adjusts a coordinate
+     *
+     * @param $factor
+     * @param string $parameter
+     * @return string|null
+     */
+    public function getAdjustedValue($factor, string $parameter): ?string
+    {
+        $this->$parameter += $factor;
+
+        if ($this->scooter->getMetadata() && 0b01) {
+            if (abs($this->$parameter) > abs($this->destination)) {
+                $this->$parameter = $this->destination;
+            }
+        } else {
+            if (abs($this->$parameter) < abs($this->destination)) {
+                $this->$parameter = $this->destination;
+            }
+        }
+
+        return (string)$this->$parameter;
     }
 
     public function setLongitude(string $longitude): self
@@ -116,5 +147,17 @@ class Location
                 ->atPath('updatedAt')
                 ->addViolation();
         }
+    }
+
+    public function getDestination(): ?string
+    {
+        return $this->destination;
+    }
+
+    public function setDestination(string $destination): self
+    {
+        $this->destination = $destination;
+
+        return $this;
     }
 }
