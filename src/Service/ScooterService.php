@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use App\Message\Event\ChangeScooterStatusEvent;
 use App\Entity\{
     Scooter,
     Location
@@ -10,6 +11,7 @@ use Codeception\Util\HttpCode;
 use App\Repository\ScooterRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Interfaces\Service\ScooterServiceInterface;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -97,10 +99,33 @@ class ScooterService extends BaseService implements ScooterServiceInterface
             $this->em->persist($location);
             $this->em->flush();
 
+            $this->em->persist($location->getScooter());
+            $this->em->flush();
+
             if (!$location->getScooter()->getDistance()) {
-                $this->em->persist($location->getScooter());
-                $this->em->flush();
+                $statusCode = HttpCode::NO_CONTENT;
+                $response = [];
             }
+        }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function checkStatusCode(
+        Scooter $scooter,
+        int $statusCode,
+        MessageBusInterface $eventBus
+    ): void {
+        // here we are using 204 as a trigger to set up `occupied=false` status
+        // for a scooter
+        if ($statusCode == HttpCode::NO_CONTENT) {
+            $eventBus->dispatch(
+                new ChangeScooterStatusEvent(
+                    $scooter->getId(),
+                    false
+                )
+            );
         }
     }
 }

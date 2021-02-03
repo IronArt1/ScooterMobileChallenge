@@ -39,8 +39,14 @@ abstract class ScooterUpdateLocationBuilderAbstract extends BuilderAbstract
     abstract protected function aScooterUpdateLocation(): void;
 
     /**
-     * Make an appropriate response for a controller
+     * Checks a necessity of issuing an event of updating scooter's status
      * A 2nd listener's
      */
-    abstract protected function bMakeResponse(): void;
+    abstract protected function bCheckingNecessityOfScooterStatusUpdate(): void;
+
+    /**
+     * Makes an appropriate response for a controller
+     * A 3rd listener's
+     */
+    abstract protected function cMakeResponse(): void;
 }

@@ -3,6 +3,7 @@
 namespace App\Interfaces\Service;
 
 use App\Entity\Scooter;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -48,5 +49,18 @@ interface ScooterServiceInterface
         ValidatorInterface $validator,
         array &$response,
         string &$statusCode
+    ): void;
+
+    /**
+     * Checks a necessity of issuing an update of scooter's status
+     *
+     * @param Scooter $scooter
+     * @param int $statusCode
+     * @param MessageBusInterface $messageBus
+     */
+    public function checkStatusCode(
+        Scooter $scooter,
+        int $statusCode,
+        MessageBusInterface $messageBus
     ): void;
 }

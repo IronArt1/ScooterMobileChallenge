@@ -46,17 +46,18 @@ class LocationSetListener implements EventHandlerInterface
                     $scooter->getDistance() + $change
                 );
 
-                $method = self::GET_HOLDER . ucfirst($scooter->getMetadata() && 0b1 ?
+                $meta = stream_get_contents($scooter->getMetadata());
+                $method = self::GET_HOLDER . ucfirst($meta & 0b10 ?
                     self::UNITS_OF_COORDINATES[1] :
                     self::UNITS_OF_COORDINATES[0]);
 
                 if ($location->$method() == $location->getDestination()) {
-                    if ($scooter->getMetadata() && 0b01) {
+                    if ($meta & 0b01) {
                         $location->setDestination($location->getDestination() - $scooter->getDistance());
-                        $scooter->setMetadata($scooter->getMetadata() && 0b10);
+                        $scooter->setMetadata($meta & 0b10);
                     } else {
-                        $location->setDestination($location->getDestination() + $scooter->getDistance());
-                        $scooter->setMetadata($scooter->getMetadata() && 0b11);
+                        $location->setDestination($location->getDestination() - $scooter->getDistance());
+                        $scooter->setMetadata($meta | 0b11);
                     }
                     $scooter->setDistance(0);
                 }

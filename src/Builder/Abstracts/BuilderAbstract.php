@@ -110,7 +110,8 @@ abstract class BuilderAbstract
         eval('$validation=static::' . $this->method . "_VALIDATION$suffix;");
 
         foreach ($validation as $key => $type) {
-            if (empty($this->body[$key])) {
+            // we need `false` for `occupied` field
+            if (empty($this->body[$key]) && $this->body[$key] !== false) {
                 throw new InsufficientDataException(
                     [
                         "`$key`"

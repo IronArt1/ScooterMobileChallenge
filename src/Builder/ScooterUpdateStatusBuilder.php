@@ -88,5 +88,7 @@ final class ScooterUpdateStatusBuilder extends ScooterUpdateStatusBuilderAbstrac
             $this->scooter,
             $this->body['occupied']
         );
+
+        $this->response = [];
     }
 }

@@ -91,16 +91,16 @@ class Location
      * @param string $parameter
      * @return string|null
      */
-    public function getAdjustedValue($factor, string $parameter): ?string
+    public function getAdjustedValue($factor, string $parameter, $meta): ?string
     {
         $this->$parameter += $factor;
 
-        if ($this->scooter->getMetadata() && 0b01) {
-            if (abs($this->$parameter) > abs($this->destination)) {
+        if ($meta & 0b01) {
+            if (abs($this->$parameter) >= abs($this->destination)) {
                 $this->$parameter = $this->destination;
             }
         } else {
-            if (abs($this->$parameter) < abs($this->destination)) {
+            if (abs($this->$parameter) <= abs($this->destination)) {
                 $this->$parameter = $this->destination;
             }
         }

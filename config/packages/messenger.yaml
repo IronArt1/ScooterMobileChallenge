@@ -42,3 +42,4 @@ framework:
         routing:
           'App\Message\Command\DeployScooters': async_priority_high
           'App\Message\Event\RunningScooterEvent': async
+          'App\Message\Event\ChangeScooterStatusEvent': async

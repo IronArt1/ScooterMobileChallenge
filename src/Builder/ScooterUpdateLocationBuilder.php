@@ -8,6 +8,7 @@ use App\Service\ScooterService;
 use App\Interfaces\Builder\BuilderInterface;
 use App\Exception\InsufficientDataException;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use App\Builder\Abstracts\ScooterUpdateLocationBuilderAbstract;
@@ -44,15 +45,26 @@ final class ScooterUpdateLocationBuilder extends ScooterUpdateLocationBuilderAbs
      * @var ValidatorInterface
      */
     private $validator;
+
+    /**
+     * @var Request
+     */
     private Request $request;
 
     /**
-     * ScooterUpdateStatusBuilder constructor.
+     * @var MessageBusInterface
+     */
+    private MessageBusInterface $eventBus;
+
+    /**
+     * ScooterUpdateLocationBuilder constructor.
      *
      * @param Scooter $scooter
      * @param ValidatorInterface $validator
      * @param SerializerInterface $serializer
      * @param ScooterService $scooterService
+     * @param Request $request
+     * @param MessageBusInterface $eventBus
      * @throws \ReflectionException
      */
     public function __construct(
@@ -60,12 +72,14 @@ final class ScooterUpdateLocationBuilder extends ScooterUpdateLocationBuilderAbs
         ValidatorInterface $validator,
         SerializerInterface $serializer,
         ScooterService $scooterService,
-        Request $request
+        Request $request,
+        MessageBusInterface $eventBus
     ) {
         parent::__construct();
 
         $this->request = $request;
         $this->scooter = $scooter;
+        $this->eventBus = $eventBus;
         $this->validator = $validator;
         $this->serializer = $serializer;
         $this->scooterService = $scooterService;
@@ -112,5 +126,25 @@ final class ScooterUpdateLocationBuilder extends ScooterUpdateLocationBuilderAbs
             $this->response,
             $this->statusCode
         );
+    }
+
+    /**
+     * @inheritDoc
+     */
+    final protected function bCheckingNecessityOfScooterStatusUpdate(): void
+    {
+        $this->scooterService->checkStatusCode(
+            $this->scooter,
+            $this->statusCode,
+            $this->eventBus
+        );
+    }
+
+    /**
+     * @throws \Exception
+     */
+    protected function cMakeResponse(): void
+    {
+        $this->bMakeResponse();
     }
 }

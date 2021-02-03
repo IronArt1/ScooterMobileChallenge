@@ -2,19 +2,19 @@
 
 namespace App\Controller;
 
-use App\Builder\ScooterUpdateLocationBuilder;
 use App\Entity\Scooter;
 use App\Builder\Superior;
-use Codeception\Util\HttpCode;
 use App\Service\ScooterService;
+use App\Builder\{
+    ScooterUpdateStatusBuilder,
+    ScooterUpdateLocationBuilder
+};
 use Symfony\Component\HttpFoundation\{
-    Request,
     Response,
     JsonResponse
 };
-use Doctrine\ORM\EntityManagerInterface;
-use App\Builder\ScooterUpdateStatusBuilder;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -58,22 +58,20 @@ class ScooterController extends BaseController
      * Allows update location for a scooter
      *
      * @Route("/scooter/{id}/update-location", name="scooter-update-location", methods={"POST"})
-     * @param Request $request
      * @param Scooter $scooter
      * @param ValidatorInterface $validator
      * @param ScooterService $scooterService
      * @param SerializerInterface $serializer
-     * @param EntityManagerInterface $entityManager
+     * @param MessageBusInterface $eventBus
      * @return JsonResponse
      * @throws \ReflectionException
      */
     public function updateScooterLocation(
-        Request $request,
         Scooter $scooter,
         ValidatorInterface $validator,
         ScooterService $scooterService,
         SerializerInterface $serializer,
-        EntityManagerInterface $entityManager
+        MessageBusInterface $eventBus
     ): JsonResponse {
         // see a comment at line 35
         $this->denyAccessUnlessGranted('MANAGE', $scooter);
@@ -88,7 +86,8 @@ class ScooterController extends BaseController
             $validator,
             $serializer,
             $scooterService,
-            $this->request
+            $this->request,
+            $eventBus
         );
 
         return $superior->build($scooterUpdateLocationBuilder);

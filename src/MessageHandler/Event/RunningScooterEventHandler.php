@@ -32,7 +32,7 @@ class RunningScooterEventHandler implements MessageHandlerInterface, EventHandle
     /**
      * It appears to be a factor for transformation km into longitude
      */
-    private const DELIMITER = 100;
+    private const DELIMITER = 100000;
 
     /**
      * @var MessageBusInterface
@@ -85,15 +85,19 @@ class RunningScooterEventHandler implements MessageHandlerInterface, EventHandle
     public function __invoke(RunningScooterEvent $event)
     {
         /** @var $scooter Scooter  */
-        $scooter = $this->tokenStorage->getToken()->getUser();
+        $scooter = $this->entityManager->getRepository(Scooter::class)->findOneBy(
+            ['id' => $event->getScooterId()]
+        );
 
         // Let's assume here that 1 second equals 1 minute of traveling,
         // since we are not going to waste any of our time and wait for updates...
+        $diff = (new \DateTime())->diff($scooter->getLocation()->getUpdatedAt())->s;
         $factor = ($event->getScooterVelocity() *
-            (new \DateTime())->diff($scooter->getLocation()->getUpdatedAt())->s) /
+            $diff) /
             self::DELIMITER;
 
-        if ($scooter->getMetadata() && 0b01) {
+        $meta = stream_get_contents($scooter->getMetadata());
+        if ($meta & 0b01) {
             $factor *= -1;
         }
 
@@ -101,9 +105,24 @@ class RunningScooterEventHandler implements MessageHandlerInterface, EventHandle
             [
             'updatedAt'=> (new \DateTime())->format(DATE_ATOM)
         ] + (
-                ($scooter->getMetadata() && 0b10) ?
-                [self::UNITS_OF_COORDINATES[1] => (string)($scooter->getLocation()->getAdjustedValue($factor, self::UNITS_OF_COORDINATES[1]))] :
-                [self::UNITS_OF_COORDINATES[0] => (string)($scooter->getLocation()->getAdjustedValue($factor, self::UNITS_OF_COORDINATES[0]))]
+                // currently we are moving by line so...
+                ($meta & 0b10) ?
+                [
+                    self::UNITS_OF_COORDINATES[0] => (string)$scooter->getLocation()->getLatitude(),
+                    self::UNITS_OF_COORDINATES[1] => (string)($scooter->getLocation()->getAdjustedValue(
+                        $factor,
+                        self::UNITS_OF_COORDINATES[1],
+                        $meta
+                    ))
+                ] :
+                [
+                    self::UNITS_OF_COORDINATES[0] => (string)($scooter->getLocation()->getAdjustedValue(
+                        $factor,
+                        self::UNITS_OF_COORDINATES[0],
+                        $meta
+                    )),
+                    self::UNITS_OF_COORDINATES[1] => (string)$scooter->getLocation()->getLongitude()
+                ]
             )
         );
 
@@ -132,7 +151,7 @@ class RunningScooterEventHandler implements MessageHandlerInterface, EventHandle
                     $event->getScooterVelocity()
                 )
             );
-        } else {
+        } else if ($response['responseCode'] != HttpCode::NO_CONTENT) {
             // there is something wrong with a particular scooter
             throw new ScooterMalfunctioningException($scooter->getId());
         }

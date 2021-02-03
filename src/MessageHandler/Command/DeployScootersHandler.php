@@ -84,7 +84,7 @@ class DeployScootersHandler implements MessageSubscriberInterface
     public function __invoke(DeployScooters $deployScooters)
     {
         $scooters = $this->entityManager->getRepository(Scooter::class)->findBy(
-            [],
+            ['occupied' => false],
             null,
             $deployScooters->getNumberOfScooters()
         );
@@ -112,7 +112,7 @@ class DeployScootersHandler implements MessageSubscriberInterface
                 BaseService::SYMFONY_URL_HOLDER
             );
 
-            if ($response['responseCode'] == HttpCode::CREATED) {
+            if ($response['responseCode'] == HttpCode::OK) {
                 $this->eventBus->dispatch(
                     new RunningScooterEvent(
                         $scooter->getId(),
