@@ -11,7 +11,6 @@ $ sudo docker exec -it nordlockerscooter_webserver_1 bash
 $ chmod -R 744 bin
 $ bin/console doctrine:schema:create
 $ bin/console doctrine:fixtures:load
-$ bin/console doctrine:migrations:migrate
 
 # locally run in the root of the project (meaning not in the docker container):
 $ mysql --host=127.0.0.1 --port=33066 --user=root --password=root
