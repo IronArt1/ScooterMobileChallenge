@@ -39,20 +39,20 @@ class ScooterFixture extends BaseFixture
         // Niagara St
         [
             // Latitude's (start's)
-            43.641719,
+            43.657552,
             // Longitude's (start's)
             -79.415174,
             // Latitude's (end's)
-            43.657552
+            43.641719
         ],
         // West Queen West
         [43.645193, -79.413166, 43.634827],
         // Liberty Village
-        [43.634770, -79.425798, 43.657637],
+        [43.657637, -79.425798, 43.634770],
         // Little Portugal
-        [43.641662, -79.421745, 43.657666],
+        [43.657666, -79.421745, 43.641662],
         // Aqua Condo
-        [43.637874, -79.392154, 43.658890]
+        [43.658890, -79.392154, 43.637874]
     ];
 
     /**
@@ -99,10 +99,10 @@ class ScooterFixture extends BaseFixture
             $scooter = new Scooter();
             $scooter->setOccupied(0);
             $scooter->setLocation($location);
-            // 0b01 - the first bit is a direction on a street
-            // 0b10 - the second bit makes a differentiation what we have in
-            //       `Location->Destination` which are: Latitude(0)/Longitude(1)
-            $scooter->setMetadata(($i < 5) ? 0b11 : 0b01);
+            // 0b01|0b10 - the first/second bits are directions on a street
+            // 0b1000|0b0100 - the third/forth bits make a differentiation what we have in
+            //       `Location->Destination` which are: Latitude/Longitude accordingly
+            $scooter->setMetadata(($i < 5) ? 0b0101 : 0b1001);
             $scooter->setDistance(0);
 
             $apiToken = new ApiToken($scooter, $this->JWTTokenService);

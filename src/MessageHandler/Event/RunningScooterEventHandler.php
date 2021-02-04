@@ -98,7 +98,7 @@ class RunningScooterEventHandler implements MessageHandlerInterface, EventHandle
             self::DELIMITER;
 
         $meta = stream_get_contents($scooter->getMetadata());
-        if ($meta & 0b01) {
+        if ($meta & 0b0001) {
             $factor *= -1;
         }
 
@@ -107,7 +107,7 @@ class RunningScooterEventHandler implements MessageHandlerInterface, EventHandle
             'updatedAt'=> (new \DateTime())->format(DATE_ATOM)
         ] + (
                 // currently we are moving by line so...
-                ($meta & 0b10) ?
+                ($meta & 0b0100) ?
                 [
                     self::UNITS_OF_COORDINATES[0] => (string)$scooter->getLocation()->getLatitude(),
                     self::UNITS_OF_COORDINATES[1] => (string)($scooter->getLocation()->getAdjustedValue(

@@ -95,7 +95,7 @@ class Location
     {
         $this->$parameter += $factor;
 
-        if ($meta & 0b01) {
+        if ($meta & 0b0001) {
             if (abs($this->$parameter) >= abs($this->destination)) {
                 $this->$parameter = $this->destination;
             }
