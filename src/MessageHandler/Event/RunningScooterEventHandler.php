@@ -30,7 +30,8 @@ class RunningScooterEventHandler implements MessageHandlerInterface, EventHandle
     private const MINUTES = 60;
 
     /**
-     * It appears to be a factor for transformation km into longitude
+     * It appears to be a factor for transformation km into longitude,
+     * so called ratio. (Needs to be heavily checked, though)
      */
     private const DELIMITER = 100000;
 

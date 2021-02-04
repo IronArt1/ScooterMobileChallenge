@@ -99,9 +99,9 @@ class ScooterFixture extends BaseFixture
             $scooter = new Scooter();
             $scooter->setOccupied(0);
             $scooter->setLocation($location);
-            // 0b1 - the first bit makes a differentiation what we have in
-            //       `Location->Destination`: Latitude(0)/Longitude(1)
-            // 0b01 - the second bit is a direction on a street
+            // 0b10 - the second bit makes a differentiation what we have in
+            //       `Location->Destination` which are: Latitude(0)/Longitude(1)
+            // 0b01 - the first bit is a direction on a street
             $scooter->setMetadata(($i < 5) ? 0b11 : 0b01);
             $scooter->setDistance(0);
 
