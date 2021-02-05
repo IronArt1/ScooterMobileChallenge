@@ -28,7 +28,7 @@ class ScooterController extends BaseController
     /**
      * Updates a scooter's status
      *
-     * @Route("/scooter/{id}/update-status", name="scooter-update-status", methods={"POST"})
+     * @Route("/scooter/{id}/update-status", name="scooter-update-status", methods={"PATCH"})
      * @param Scooter $scooter
      * @param ScooterService $scooterService
      * @return Response
@@ -57,7 +57,7 @@ class ScooterController extends BaseController
     /**
      * Allows update location for a scooter
      *
-     * @Route("/scooter/{id}/update-location", name="scooter-update-location", methods={"POST"})
+     * @Route("/scooter/{id}/update-location", name="scooter-update-location", methods={"PATCH"})
      * @param Scooter $scooter
      * @param ValidatorInterface $validator
      * @param ScooterService $scooterService

@@ -91,7 +91,7 @@ class BaseService extends AbstractService
      *
      * @var string
      */
-    protected $requestType = self::REQUEST_TYPE_POST;
+    protected $requestType = self::REQUEST_TYPE_PATCH;
 
     /**
      * A bit for a mapping issue's
@@ -176,7 +176,7 @@ class BaseService extends AbstractService
     }
 
       /**
-     * Make an asynchronous request
+     * Makes an asynchronous request
      *
      * @param mixed $body
      * @param string $urlType

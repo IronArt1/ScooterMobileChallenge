@@ -92,7 +92,8 @@ class DeployScootersHandler implements MessageSubscriberInterface
         $velocityData = $this->getVelocity();
 
         $this->scooterService->setBodyFields([
-           'occupied' => true
+           'occupied' => true,
+           'updatedAt'=> (new \DateTime())->format(DATE_ATOM)
         ]);
 
         /** @var  $scooter Scooter */

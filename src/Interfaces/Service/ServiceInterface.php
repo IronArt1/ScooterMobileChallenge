@@ -24,10 +24,11 @@ interface ServiceInterface
     ];
 
     /**
-     * Types of requests being used by App
+     * Types of requests are being used by App
      */
     public const REQUEST_TYPE_GET  = 'GET';
     public const REQUEST_TYPE_POST = 'POST';
+    public const REQUEST_TYPE_PATCH = 'PATCH';
 
     /**
      * An authenticated user id header's.

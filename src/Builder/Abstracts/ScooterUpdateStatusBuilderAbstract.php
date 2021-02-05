@@ -15,7 +15,7 @@ abstract class ScooterUpdateStatusBuilderAbstract extends BuilderAbstract
     /**
      * Validation parameters for POST request are
      */
-    protected const POST_VALIDATION = [
+    protected const PATCH_VALIDATION = [
         'occupied' => ControllerInterface::BOOLEAN_TYPE_HOLDER,
     ];
 

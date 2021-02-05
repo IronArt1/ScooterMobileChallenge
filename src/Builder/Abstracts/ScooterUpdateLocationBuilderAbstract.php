@@ -15,7 +15,7 @@ abstract class ScooterUpdateLocationBuilderAbstract extends BuilderAbstract
     /**
      * Validation parameters for POST request are
      */
-    protected const POST_VALIDATION = [
+    protected const PATCH_VALIDATION = [
         'updatedAt' => ControllerInterface::STRING_TYPE_HOLDER,
         'latitude' => ControllerInterface::STRING_TYPE_HOLDER,
         'longitude' => ControllerInterface::STRING_TYPE_HOLDER

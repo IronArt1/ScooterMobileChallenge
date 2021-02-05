@@ -145,7 +145,7 @@ class RunningScooterEventHandler implements MessageHandlerInterface, EventHandle
 
         if ($response['responseCode'] == HttpCode::CREATED) {
             // although we do can create a new queue and apply the time delay there...
-            sleep(random_int(2, 5));
+            sleep(random_int(1, 3));
             $this->eventBus->dispatch(
                 new RunningScooterEvent(
                     $scooter->getId(),
