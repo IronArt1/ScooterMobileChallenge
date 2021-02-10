@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Scooter;
+use App\Interfaces\Repository\ScooterRepositoryInterface;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -12,7 +13,7 @@ use Doctrine\Persistence\ManagerRegistry;
  * @method Scooter[]    findAll()
  * @method Scooter[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class ScooterRepository extends ServiceEntityRepository
+class ScooterRepository extends ServiceEntityRepository implements ScooterRepositoryInterface
 {
     public function __construct(ManagerRegistry $registry)
     {
@@ -40,11 +41,31 @@ class ScooterRepository extends ServiceEntityRepository
     /**
      * @return Scooter[]
      */
-    public function findAllMatching(?string $query, int $limit = 5)
+    public function findAllMatching(array $params, string $status, int $limit = 10)
     {
+        switch ($status) {
+            case self::OCCUPIED_STATUS:
+                $status = 1;
+                break;
+            case self::AVAILABLE_STATUS:
+                $status = 0;
+                break;
+            default:
+                $status = '%';
+        }
+
         return $this->createQueryBuilder('s')
-            ->andWhere('s.ocupied LIKE :query')
-            ->setParameter('query', '%'.$query.'%')
+            ->leftJoin('s.location', 'l')
+            ->andWhere('s.occupied LIKE :status')
+            ->andWhere('l.latitude <= :startLatitude')
+            ->andWhere('l.latitude >= :endLatitude')
+            ->andWhere('l.longitude >= :startLongitude')
+            ->andWhere('l.longitude <= :endLongitude')
+            ->setParameter('status', $status)
+            ->setParameter('startLatitude', $params['startLatitude'])
+            ->setParameter('endLatitude', $params['endLatitude'])
+            ->setParameter('startLongitude', $params['startLongitude'])
+            ->setParameter('endLongitude', $params['endLongitude'])
             ->setMaxResults($limit)
             ->getQuery()
             ->getResult();

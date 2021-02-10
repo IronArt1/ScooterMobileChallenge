@@ -5,9 +5,9 @@ namespace App\Entity;
 use Faker\Factory;
 use App\Service\JWTTokenService;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
-use function PHPUnit\Framework\isNull;
 
 /**
  * A very simple representation of JWT is that is actually useless in a real world...
@@ -26,6 +26,7 @@ class ApiToken
     private $id;
 
     /**
+     * @Groups("main")
      * @ORM\Column(type="string", length=512)
      */
     private $token;

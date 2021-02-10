@@ -31,8 +31,7 @@ http://127.0.0.1:15672/
 # and see what is happening with queues...
 # as long as `messages_high` queue is empty you can go to the DB and periodically run:
 mysql> select * from location;
-# and see that scooters are changing their location (now there is only testing 
-# data just how it works in general.)
+# and see that scooters are changing their location regarding their velocity
 
 # if case we have failed messages:
 $ bin/console messenger:failed:retry -vv

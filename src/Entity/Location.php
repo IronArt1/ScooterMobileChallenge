@@ -5,9 +5,8 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\LocationRepository;
 use Gedmo\Mapping\Annotation as Gedmo;
-use App\Interfaces\Controller\ControllerInterface;
-use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
@@ -27,7 +26,7 @@ class Location
     private $id;
 
     /**
-     * @Groups({"input"})
+     * @Groups({"input", "main"})
      * @ORM\Column(type="decimal", precision=20, scale=16)
      * @Assert\NotNull(message="Please set a latitude")
      * @Assert\Regex("/\d+(\.\d+)?/")
@@ -35,7 +34,7 @@ class Location
     private $latitude;
 
     /**
-     * @Groups({"input"})
+     * @Groups({"input", "main"})
      * @ORM\Column(type="decimal", precision=20, scale=16)
      * @Assert\NotNull(message="Please set a longitude")
      * @Assert\Regex("/\d+(\.\d+)?/")

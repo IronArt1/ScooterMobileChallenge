@@ -128,4 +128,39 @@ class ScooterService extends BaseService implements ScooterServiceInterface
             );
         }
     }
+
+    /**
+     * Gets scooters status
+     *
+     * @param array $body
+     * @param string $status
+     * @param $response
+     */
+    public function getScootersStatus(
+        array $body,
+        string $status,
+        &$response
+    ) {
+        $this->checkConsistency($body['startLatitude'], $body['endLatitude']);
+        $this->checkConsistency($body['endLongitude'], $body['startLongitude']);
+
+        $response = $this->scooterRepository->findAllMatching(
+            $body,
+            $status
+        );
+    }
+
+
+    /**
+     * Checks consistency of latitude/longitude
+     *
+     * @param $startPoint
+     * @param $endPoint
+     */
+    private function checkConsistency(&$startPoint, &$endPoint): void
+    {
+        if ($startPoint < $endPoint) {
+            [$startPoint, $endPoint] = [$startPoint, $endPoint];
+        }
+    }
 }

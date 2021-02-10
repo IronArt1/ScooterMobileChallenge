@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
@@ -24,11 +25,13 @@ class Scooter extends BaseEntity implements UserInterface
     protected $apiTokens;
 
     /**
+     * @Groups("main")
      * @ORM\Column(type="boolean")
      */
     private $occupied = FALSE;
 
     /**
+     * @Groups("main")
      * @ORM\OneToOne(targetEntity=Location::class, inversedBy="scooter", cascade={"persist", "remove"})
      * @ORM\JoinColumn(nullable=false)
      */

@@ -13,7 +13,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 abstract class ScooterUpdateLocationBuilderAbstract extends BuilderAbstract
 {
     /**
-     * Validation parameters for POST request are
+     * Validation parameters for PATCH request are
      */
     protected const PATCH_VALIDATION = [
         'updatedAt' => ControllerInterface::STRING_TYPE_HOLDER,

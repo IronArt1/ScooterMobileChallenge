@@ -2,8 +2,8 @@
 
 namespace App\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
@@ -15,7 +15,19 @@ use Symfony\Component\Security\Core\User\UserInterface;
 class Mobile extends BaseEntity implements UserInterface
 {
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\ApiToken", mappedBy="scooter", orphanRemoval=true)
+     * @Groups("main")
+     * @ORM\OneToMany(targetEntity="App\Entity\ApiToken", mappedBy="mobile", orphanRemoval=true)
      */
     protected $apiTokens;
+
+    /**
+     * @see UserInterface
+     */
+    public function getRoles(): array
+    {
+        // right now just faking it
+        // and yes I know that it is a violation of SOLID
+        // -> Interface segregation principle
+        return ['OBSERVE'];
+    }
 }

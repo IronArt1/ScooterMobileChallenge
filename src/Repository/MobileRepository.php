@@ -44,17 +44,6 @@ class MobileRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    /**
-     * @return Mobile[]
-     */
-    public function findAllSubscribedToNewsletter(): array
-    {
-        return $this->createQueryBuilder('m')
-            ->andWhere('u.subscribeToNewsletter = 1')
-            ->getQuery()
-            ->getResult();
-    }
-
 //    /**
 //     * @return Mobile[] Returns an array of User objects
 //     */
