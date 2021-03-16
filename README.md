@@ -1,13 +1,14 @@
 # the following command should be run:
 $ mkdir /tmp/scooter && cd /tmp/scooter
-$ git clone https://github.com/IronArt1/NordLockerScooter.git
-$ cd NordLockerScooter
+$ git clone https://github.com/IronArt1/ScooterMobileChallenge.git
+$ cd ScooterMobileChallenge
 $ git checkout -b develop origin/develop
 $ composer install
 $ docker-compose up
 # open another terminal and run:
 $ docker ps -a
-$ sudo docker exec -it nordlockerscooter_webserver_1 bash
+# look up a name for a webserver container and use it, like: 
+$ sudo docker exec -it scootermobilechallenge_webserver_1 bash
 $ chmod -R 744 bin
 $ bin/console doctrine:schema:create
 $ bin/console doctrine:fixtures:load
@@ -43,10 +44,10 @@ $ bin/console messenger:failed:retry -vv
 
 # just in case if there is a need to call API from the console:
 # updates a scooter status:
-$ curl -ivL -X POST -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmYWtlUGFyYW0xIjoiYmQ5NTBmY2ItMGRhOC0zMGU5LWEzYzAtZmJhNDNjYWNiNWUzIiwiZmFrZVBhcmFtMiI6IjEzMzI1NDYyMDY3NjE1NyIsImZha2VQYXJhbTMiOiJCYWlsZXkgYW5kIFNvbnMiLCJmYWtlUGFyYW00IjoiS1dEIiwiZXhwIjoxNjExODAyMjY5fQ.82f37d6dc727b2aab087384274709547e8e5c27aa894773d8b581a821e4f332a" -H "Content-type: application/json" -d '{"occupied": true}' -b cookies.txt 'http://my.scooter.com/scooter/ac11fb43-87b4-4f91-9035-fff87b2df269/update-status'
+$ curl -ivL -X PATCH -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmYWtlUGFyYW0xIjoiYmQ5NTBmY2ItMGRhOC0zMGU5LWEzYzAtZmJhNDNjYWNiNWUzIiwiZmFrZVBhcmFtMiI6IjEzMzI1NDYyMDY3NjE1NyIsImZha2VQYXJhbTMiOiJCYWlsZXkgYW5kIFNvbnMiLCJmYWtlUGFyYW00IjoiS1dEIiwiZXhwIjoxNjExODAyMjY5fQ.82f37d6dc727b2aab087384274709547e8e5c27aa894773d8b581a821e4f332a" -H "Content-type: application/json" -d '{"occupied": true}' -b cookies.txt 'http://my.scooter.com/scooter/ac11fb43-87b4-4f91-9035-fff87b2df269/update-status'
 
 # updates a scooter location:
-$ curl -ivL -X POST -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmYWtlUGFyYW0xIjoiYzU5ZmRmYjMtYTQzMS0zZTU3LWEwZWItZDI4NzZjZmJlZGVkIiwiZmFrZVBhcmFtMiI6IjY3OTAxNDMyNTc2OTE4OCIsImZha2VQYXJhbTMiOiJHbGVpY2huZXIsIFBhZ2FjIGFuZCBCb2RlIiwiZmFrZVBhcmFtNCI6IkNVQyIsImV4cCI6MTYxMTgxMjUwNX0.424477a229dc304568736f6c20b7600c2ae4f6f83ef1758627d2ec41ff9117fe" -H "Content-type: application/json" -d '{"latitude": "43.9999", "longitude": "79.1111", "updatedAt": "1010-10-10 10:10:10"}' -b cookies.txt 'http://my.scooter.com/scooter/f5e86469-e0a3-4f68-a1e2-9c7296dc1794/update-location'
+$ curl -ivL -X PATCH -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmYWtlUGFyYW0xIjoiYzU5ZmRmYjMtYTQzMS0zZTU3LWEwZWItZDI4NzZjZmJlZGVkIiwiZmFrZVBhcmFtMiI6IjY3OTAxNDMyNTc2OTE4OCIsImZha2VQYXJhbTMiOiJHbGVpY2huZXIsIFBhZ2FjIGFuZCBCb2RlIiwiZmFrZVBhcmFtNCI6IkNVQyIsImV4cCI6MTYxMTgxMjUwNX0.424477a229dc304568736f6c20b7600c2ae4f6f83ef1758627d2ec41ff9117fe" -H "Content-type: application/json" -d '{"latitude": "43.9999", "longitude": "79.1111", "updatedAt": "1010-10-10 10:10:10"}' -b cookies.txt 'http://my.scooter.com/scooter/f5e86469-e0a3-4f68-a1e2-9c7296dc1794/update-location'
 
 # and just in case the one I've already mentioned above:
 # deploys scooters:
