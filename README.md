@@ -1,4 +1,4 @@
 # ScooterMobileChallenge
 
-$ git clone ...
+$ git clone .../ScooterMobileChallenge.git
 $ git checkout develop
